@@ -3,17 +3,8 @@
  */
 package main;
 
-import com.jgraph.algebra.cost.JGraphCostFunction;
-import com.jgraph.layout.JGraphFacade;
-import com.jgraph.layout.JGraphLayout;
-import com.jgraph.layout.hierarchical.JGraphHierarchicalLayoutStep;
-import com.jgraph.layout.hierarchical.model.JGraphHierarchyModel;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import main.Matrix;
 
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
@@ -24,8 +15,7 @@ import org.jgrapht.graph.SimpleWeightedGraph;
  * @author KamikazeOnRoad
  *
  */
-public class Dijkstra /*implements JGraphLayout, JGraphHierarchicalLayoutStep,
-		JGraphCostFunction*/ {
+public class Dijkstra {
 	
 	
 

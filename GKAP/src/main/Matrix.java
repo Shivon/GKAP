@@ -91,14 +91,30 @@ public class Matrix {
 		this.getMatrix().put(startNode, endNodesAndWeights);
 	}
 	
-	// Attention regarding overwriting...	
+
 	/**
-	 * 
-	 * 
+	 * Adds edge to matrix if specific edge doesn't exist already. 
+	 * If it exists, does not change the matrix
 	 * @author KamikazeOnRoad
 	 */
-	public void setColumn() {
-		//????
+	public void setEdge(String startNode, String endNode, int weight) {
+		boolean startNodeAlreadyInMatrix = this.containsStartNode(startNode);
+		boolean startNodeHasEndNode = this.startNodeHasEndNode(startNode, endNode);
+		
+		if (startNodeAlreadyInMatrix && !startNodeHasEndNode) {
+			HashMap<String, Integer> newEdge = new HashMap<>();
+			newEdge.put(endNode, weight);
+			
+			this.getEndNodesAndWeights(startNode).add(newEdge);
+			
+		} else if (!startNodeAlreadyInMatrix) {
+			List<HashMap<String, Integer>> listEndNodes = new ArrayList<>();
+			HashMap<String, Integer> newEdge = new HashMap<>();
+			newEdge.put(endNode, weight);
+			listEndNodes.add(newEdge);
+			
+			this.setRow(startNode, listEndNodes);			
+		} 		
 	}
 
 	
@@ -108,6 +124,10 @@ public class Matrix {
 	}
 	
 	
+	/**
+	 * Returns bool if specific EndNode is somewhere in matrix
+	 * @author KamikazeOnRoad
+	 */	
 	public boolean containsEndNode(String endNode) {
 		Set<String> startNodes = this.getAllStartNodes();
 		
@@ -115,6 +135,19 @@ public class Matrix {
 			if (this.getEndNodes(startNode).contains(endNode)) {
 				return true;
 			}
+		}
+		
+		return false;
+	}
+	
+	
+	/**
+	 * Returns bool if specific StartNode already has specific EndNode
+	 * @author KamikazeOnRoad
+	 */		
+	public boolean startNodeHasEndNode(String startNode, String endNode) {
+		if (this.containsStartNode(startNode)) {
+			return this.getEndNodes(startNode).contains(endNode);
 		}
 		
 		return false;
@@ -198,6 +231,12 @@ public class Matrix {
 		System.out.println(matrix1.getEndNodesAndWeights("v4"));
 		System.out.println(matrix1.getEndNodes("v2"));
 		System.out.println(matrix1.getAllStartNodes());	
+		matrix1.setEdge("v4", "v1", 3);
+		System.out.println(matrix1.getMatrix());
+		matrix1.setEdge("v3", "v5", 8);
+		System.out.println(matrix1.getMatrix());
+		matrix1.setEdge("v3", "v1", 1);
+		System.out.println(matrix1.getMatrix());
 	}
 
 }
