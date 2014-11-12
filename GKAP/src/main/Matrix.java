@@ -4,7 +4,8 @@
 package main;
 
 import java.util.*;
-
+import org.jgrapht.Graph;
+import org.jgraph.graph.*; 
 
 /**
  * @author KamikazeOnRoad
@@ -16,6 +17,20 @@ public class Matrix {
 	
 	public Matrix() {
 		matrix = new HashMap<>();
+	}
+	
+	
+	public Matrix(Graph<String,DefaultEdge> graph) {
+		matrix = new HashMap<>();
+		Set<String> vertexSet = graph.vertexSet();
+		
+		for (String vertex : vertexSet) {
+			Set<DefaultEdge> edgeSet = graph.edgesOf(vertex);
+			
+			for (DefaultEdge dE : edgeSet) {
+				setEdge(dE.getSource().toString(), dE.getTarget().toString(), (int) graph.getEdgeWeight(dE)); 
+			}
+		}
 	}
 	
 	
@@ -237,6 +252,17 @@ public class Matrix {
 		System.out.println(matrix1.getMatrix());
 		matrix1.setEdge("v3", "v1", 1);
 		System.out.println(matrix1.getMatrix());
+		HashMap<String, Integer> test = new HashMap<>();
+		test.put("v1", 1);
+		test.put("v2", 2);
+		test.put("v3", 3);
+		System.out.println(test);
+		HashMap<String, HashMap<String, Integer>> test2 = new HashMap<>();
+		test2.put("v8", test);
+		System.out.println(test2);
+		test2.put("v9", test);
+		System.out.println(test2);
+
 	}
 
 }
