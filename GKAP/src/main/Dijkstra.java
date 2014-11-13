@@ -11,10 +11,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.jgrapht.Graph;
-import org.jgrapht.WeightedGraph;
-import org.jgrapht.graph.*;
-
-import sun.font.CreatedFontTracker;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.Pseudograph;
+import org.jgrapht.graph.SimpleWeightedGraph;
 
 import com.sun.istack.internal.Nullable;
 
@@ -39,8 +38,6 @@ public class Dijkstra {
 			node = predecessors.get(node);
 		}
 		
-		System.out.println(predecessors);
-		
 		//System.out.println(result);
 		//System.out.println(result.toArray());
 		//return (String[]) result.toArray();
@@ -53,7 +50,6 @@ public class Dijkstra {
 	@Nullable
 	private static HashMap<String, String> dijkstraAlgorithm(Graph<String, DefaultEdge> graph, String startNode, String endNode) {
 		Set<String> allNodes = graph.vertexSet();
-
 		accessesGraph++;
 		boolean nodesContained = allNodes.contains(startNode) && allNodes.contains(endNode);
 		if (!nodesContained) { return null; };
@@ -74,25 +70,20 @@ public class Dijkstra {
 		HashMap<String, Integer> queueDistance = new HashMap<>(distance);		
 		while (!queue.isEmpty() || !queueDistance.isEmpty()) {			
 			String actualNode = keyForLowestValue(queueDistance);
-
 			queueDistance.remove(actualNode);
 			queue.remove(actualNode);
 			
 			// find neighbours
-			System.out.println("Looking from " + actualNode);
 			Set<DefaultEdge> incidentEdges = graph.edgesOf(actualNode);
-//			System.out.println(incidentEdges);
 			accessesGraph++;
 			Set<DefaultEdge> relevantEdges = new HashSet<>();
 			
 			for (DefaultEdge edge : incidentEdges) {
 				String neighbour = edgeTargetNode(graph, edge, actualNode);
-				System.out.println("Neighbour "+ neighbour);
 				if (neighbour != null) {
 					relevantEdges.add(edge);
 				}
 			}
-		
 			
 			for (DefaultEdge edge : relevantEdges) {
 				int weight = (int) graph.getEdgeWeight(edge);
@@ -145,9 +136,7 @@ public class Dijkstra {
 				key = entry.getKey(); 
 				value = entry.getValue();
 			}			
-		}
-		
+		}		
 		return key;
-
 	}
 }
