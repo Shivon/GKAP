@@ -4,6 +4,7 @@
 package main;
 
 import java.util.*;
+
 import org.jgrapht.Graph;
 import org.jgraph.graph.*; 
 
@@ -12,7 +13,19 @@ import org.jgraph.graph.*;
  *
  */
 public class Matrix {
-	private HashMap<String, List<HashMap<String, Integer>>> matrix;
+	
+//	HashMap<String, Integer> endNodesAndWeight = new HashMap<>();
+//	endNodesAndWeight.put("v1", 1);
+//	endNodesAndWeight.put("v2", 2);
+//	endNodesAndWeight.put("v3", 3);
+//	System.out.println(endNodesAndWeight);
+//	HashMap<String, HashMap<String, Integer>> startNodesWEdges = new HashMap<>();
+//	startNodesWEdges.put("v8", endNodesAndWeight);
+//	System.out.println(startNodesWEdges);
+//	startNodesWEdges.put("v9", endNodesAndWeight);
+//	System.out.println(startNodesWEdges);
+	
+	private HashMap<String, HashMap<String, Integer>> matrix;
 	
 	
 	public Matrix() {
@@ -38,7 +51,7 @@ public class Matrix {
 	 * Returns HashMap with all StartNodes, EndNodes and Weights
 	 * @author KamikazeOnRoad
 	 */
-	public HashMap<String, List<HashMap<String, Integer>>> getMatrix() {
+	public HashMap<String, HashMap<String, Integer>> getMatrix() {
 		return matrix;
 	}
 	
@@ -53,10 +66,10 @@ public class Matrix {
 	
 	
 	/**  
-	 * Returns list with all hashmapped EndNodes and Weight for specific StartNode.
+	 * Returns Hashmap with all EndNodes and Weight for specific StartNode.
 	 * @author KamikazeOnRoad
 	 */
-	public List<HashMap<String, Integer>> getEndNodesAndWeights(String startNode) {
+	public HashMap<String, Integer> getEndNodesAndWeights(String startNode) {
 		return this.getMatrix().get(startNode);
 	}
 	
@@ -66,43 +79,52 @@ public class Matrix {
 	 * @author KamikazeOnRoad
 	 */
 	public Set<String> getEndNodes(String startNode) {
-		List<HashMap<String, Integer>> endNodesAndWeight = this.getEndNodesAndWeights(startNode);
-		Set<String> setEndNodes = new HashSet<>();
+		HashMap<String, Integer> endNodesAndWeight = this.getEndNodesAndWeights(startNode);
 		
-		for (HashMap<String, Integer> endNode : endNodesAndWeight) {
-			setEndNodes.addAll(endNode.keySet());
-		}
-		
-		return setEndNodes;
+		return endNodesAndWeight.keySet();
 	}
 	
 	
+	/**  
+	 * Returns set of all EndNodes in matrix
+	 * @author KamikazeOnRoad
+	 */
+	public Set<String> getAllEndNodes() {
+		Set<String> startNodes = this.getAllStartNodes();
+		Set<String> allEndNodes = new HashSet<>();
+		
+		for (String startNode : startNodes) {
+			allEndNodes.addAll(this.getEndNodes(startNode));			
+		}
+		
+		return allEndNodes;
+	}	
+	
 	
 	/**  
-	 * Returns the weight as Integer. 
+	 * Returns the weight as int. 
 	 * Returns null when startNode is not included in matrix. 
 	 * Returns MAX_VALUE when there is no edge.
 	 * @author KamikazeOnRoad
 	 */
 	public int getWeight(String startNode, String endNode) {
-		List<HashMap<String, Integer>> rowStartNode = this.getMatrix().get(startNode);
+		HashMap<String, Integer> rowStartNode = this.getEndNodesAndWeights(startNode);
 		if (rowStartNode == null) { return (Integer) null; }
 		
-		for (HashMap<String, Integer> column : rowStartNode) {
-			if (column.get(endNode) != null) { return column.get(endNode); }			
-		}
+		Integer weight = rowStartNode.get(endNode);
+		if (weight != null) { return weight; };
 		
 		return Integer.MAX_VALUE;
 	}
 
 	
-	public void setMatrix(HashMap<String, List<HashMap<String, Integer>>> matrix) {
+	public void setMatrix(HashMap<String, HashMap<String, Integer>> matrix) {
 		this.matrix = matrix;
 	}
 
 
 	// Attention regarding overwriting...
-	public void setRow(String startNode, List<HashMap<String, Integer>> endNodesAndWeights) {
+	public void setRow(String startNode, HashMap<String, Integer> endNodesAndWeights) {
 		this.getMatrix().put(startNode, endNodesAndWeights);
 	}
 	
@@ -117,18 +139,11 @@ public class Matrix {
 		boolean startNodeHasEndNode = this.startNodeHasEndNode(startNode, endNode);
 		
 		if (startNodeAlreadyInMatrix && !startNodeHasEndNode) {
-			HashMap<String, Integer> newEdge = new HashMap<>();
-			newEdge.put(endNode, weight);
-			
-			this.getEndNodesAndWeights(startNode).add(newEdge);
-			
+			this.getEndNodesAndWeights(startNode).put(endNode, weight);			
 		} else if (!startNodeAlreadyInMatrix) {
-			List<HashMap<String, Integer>> listEndNodes = new ArrayList<>();
 			HashMap<String, Integer> newEdge = new HashMap<>();
 			newEdge.put(endNode, weight);
-			listEndNodes.add(newEdge);
-			
-			this.setRow(startNode, listEndNodes);			
+			this.setRow(startNode, newEdge);
 		} 		
 	}
 
@@ -147,7 +162,7 @@ public class Matrix {
 		Set<String> startNodes = this.getAllStartNodes();
 		
 		for (String startNode : startNodes) {
-			if (this.getEndNodes(startNode).contains(endNode)) {
+			if (this.startNodeHasEndNode(startNode, endNode)) {
 				return true;
 			}
 		}
@@ -209,37 +224,22 @@ public class Matrix {
 		// generate matrix
 		Matrix matrix1 = new Matrix();
 		
-		// generate columns for rowV2
-		HashMap<String, Integer> column1 = new HashMap<>();
-		column1.put("v1", 1);
-		HashMap<String, Integer> column2 = new HashMap<>();
-		column2.put("v3", 5);
-		HashMap<String, Integer> column3 = new HashMap<>();
-		column3.put("v5", 3);
-		HashMap<String, Integer> column4 = new HashMap<>();
-		column4.put("v6", 2);
-		
-		// generate row for v2
-		List<HashMap<String, Integer>> rowV2 = new ArrayList<>();
-		rowV2.add(column1);
-		rowV2.add(column2);
-		rowV2.add(column3);
-		rowV2.add(column4);
+		// generate row for startNode v2
+		HashMap<String, Integer> rowV2 = new HashMap<>();
+		rowV2.put("v1", 1);
+		rowV2.put("v3", 5);
+		rowV2.put("v5", 3);
+		rowV2.put("v6", 2);
 		matrix1.setRow("v2", rowV2);
+
 		
-		// generate columns for rowV4
-		HashMap<String, Integer> column31 = new HashMap<>();
-		column31.put("v3", 1);
-		HashMap<String, Integer> column32 = new HashMap<>();
-		column32.put("v5", 3);
-		
-		// generate row for v4
-		List<HashMap<String, Integer>> rowV4 = new ArrayList<>();
-		rowV4.add(column31);
-		rowV4.add(column32);
+		// generate row for startNode v4
+		HashMap<String, Integer> rowV4 = new HashMap<>();
+		rowV4.put("v3", 1);
+		rowV4.put("v5", 3);
 		matrix1.setRow("v4", rowV4);
 		
-		System.out.println(column1);
+		System.out.println(rowV2);
 		System.out.println(matrix1.getMatrix());
 		System.out.println(matrix1.getEndNodesAndWeights("v1"));
 		System.out.println(matrix1.getEndNodesAndWeights("v2"));
@@ -252,16 +252,18 @@ public class Matrix {
 		System.out.println(matrix1.getMatrix());
 		matrix1.setEdge("v3", "v1", 1);
 		System.out.println(matrix1.getMatrix());
-		HashMap<String, Integer> test = new HashMap<>();
-		test.put("v1", 1);
-		test.put("v2", 2);
-		test.put("v3", 3);
-		System.out.println(test);
-		HashMap<String, HashMap<String, Integer>> test2 = new HashMap<>();
-		test2.put("v8", test);
-		System.out.println(test2);
-		test2.put("v9", test);
-		System.out.println(test2);
+		
+		HashMap<String, Integer> endNodesAndWeight = new HashMap<>();
+		endNodesAndWeight.put("v1", 1);
+		endNodesAndWeight.put("v2", 2);
+		endNodesAndWeight.put("v3", 3);
+		System.out.println(endNodesAndWeight);
+		HashMap<String, HashMap<String, Integer>> startNodesWEdges = new HashMap<>();
+		startNodesWEdges.put("v8", endNodesAndWeight);
+		System.out.println(startNodesWEdges);
+		startNodesWEdges.put("v9", endNodesAndWeight);
+		System.out.println(startNodesWEdges);
+		System.out.println(matrix1.getAllEndNodes());
 
 	}
 
