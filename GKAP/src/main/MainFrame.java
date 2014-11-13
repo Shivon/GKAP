@@ -101,7 +101,7 @@ public class MainFrame extends JFrame {
 				String[] result =  Dijkstra.dijkstraSearch(graph, str, str2);
 				if(result != null){
 					textArea.append("\n ================================================= \n");
-					textArea.append("Weg: " + result[0] + "\nbenoetigte Kanten: " + result[1] + "\nZugriffe Graph: " + result[2]);
+					textArea.append("Weg: " + result[0] + "\nLaenge Weg: " + result[1] + "\nbenoetigte Kanten: " + result[2] + "\nZugriffe Graph: " + result[3]);
 				}else{
 					textArea.setText("Kein möglichen Weg gefunden! \nOder unültige Eingabe!");
 				}

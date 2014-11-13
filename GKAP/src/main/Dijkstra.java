@@ -25,6 +25,7 @@ import com.sun.istack.internal.Nullable;
 
 public class Dijkstra {
 	private static int accessesGraph = 0;
+	private static int totalWay = 0;
 	
 	@Nullable
 	public static String[] dijkstraSearch(Graph<String, DefaultEdge> graph, String startNode, String endNode) {
@@ -42,7 +43,7 @@ public class Dijkstra {
 		//System.out.println(result.toArray());
 		//return (String[]) result.toArray();
 		String resultString = result.toString();
-		String [] resultArray = {resultString, (result.size() - 1)+ "", (accessesGraph)+ ""};
+		String [] resultArray = {resultString, (totalWay)+ "", (result.size() - 1)+ "", (accessesGraph)+ ""};
 		accessesGraph = 0;
 		return resultArray;
 	}
@@ -76,6 +77,7 @@ public class Dijkstra {
 			// find neighbours
 			Set<DefaultEdge> incidentEdges = graph.edgesOf(actualNode);
 			accessesGraph++;
+			if (incidentEdges.isEmpty()) { return null; };
 			Set<DefaultEdge> relevantEdges = new HashSet<>();
 			
 			for (DefaultEdge edge : incidentEdges) {
@@ -99,6 +101,7 @@ public class Dijkstra {
 				}
 			}
 		}
+		totalWay = distance.get(endNode);
 		return predecessor; 
 	}
 	
