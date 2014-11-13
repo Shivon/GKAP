@@ -31,19 +31,24 @@ public class Dijkstra {
 			node = predecessors.get(node);
 		}
 		
-		System.out.println(accessesGraph);
+		//System.out.println(result);
+		//System.out.println(result.toArray());
+		//return (String[]) result.toArray();
+		String resultString = result.toString();
+		String [] resultArray = {resultString, (result.size() - 1)+ "", (accessesGraph)+ ""};
 		accessesGraph = 0;
-		return (String[]) result.toArray();
+		return resultArray;
 	}
 	
 	
-	public static HashMap<String, String> dijkstraAlgorithm(Graph<String, DefaultEdge> graph, String startNode, String endNode) {
+	private static HashMap<String, String> dijkstraAlgorithm(Graph<String, DefaultEdge> graph, String startNode, String endNode) {
 		Set<String> allNodes = graph.vertexSet();
+
 		accessesGraph++;
 		boolean nodesContained = allNodes.contains(startNode) && allNodes.contains(endNode);
 		if (!nodesContained) { return null; };
 
-		ArrayList<String> queue = new ArrayList(allNodes);
+		ArrayList<String> queue = new ArrayList<String>(allNodes);
 		HashMap<String, Integer> distance = new HashMap<>();
 		HashMap<String, String> predecessor = new HashMap<>();
 		
@@ -56,10 +61,13 @@ public class Dijkstra {
 		distance.put(startNode, 0);
 		
 		// run
-		while (!queue.isEmpty()) {
-			String actualNode = keyForLowestValue(distance);
+		HashMap<String, Integer> queueDistance = new HashMap<>(distance);
+		
+		while (!queue.isEmpty()) {			
+			String actualNode = keyForLowestValue(queueDistance);
+			queueDistance.remove(actualNode);
 			queue.remove(actualNode);
-						
+			
 			// find neighbours
 			Set<DefaultEdge> incidentEdges = graph.edgesOf(actualNode);
 			accessesGraph++;
@@ -81,12 +89,12 @@ public class Dijkstra {
 					int way = distance.get(actualNode) + weight;
 					if (way < distance.get(targetNode)) {
 						distance.put(targetNode, way);
+						queueDistance.put(targetNode, way);
 						predecessor.put(targetNode, actualNode);
 					}
 				}
 			}
 		}
-		
 		return predecessor; 
 	}
 	
@@ -103,5 +111,6 @@ public class Dijkstra {
 		}
 		
 		return key;
+
 	}
 }

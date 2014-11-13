@@ -91,11 +91,20 @@ public class MainFrame extends JFrame {
 				}
 			}
 		});
+		
 		dij = new JButton("Dijkstra-algorithm");
 		dij.setPreferredSize(new Dimension(200, 50));
 		dij.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-					//TODO Dijkstra
+				String str = field.getText();
+				String str2 = field2.getText();
+				String[] result =  Dijkstra.dijkstraSearch(graph, str, str2);
+				if(result != null){
+					textArea.append("\n ================================================= \n");
+					textArea.append("Weg: " + result[0] + "\nbenoetigte Kanten: " + result[1] + "\nZugriffe Graph: " + result[2]);
+				}else{
+					textArea.setText("Kein möglichen Weg gefunden! \nOder unültige Eingabe!");
+				}
 			}
 		});
 		

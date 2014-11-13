@@ -53,7 +53,7 @@ public class BFS {
 						// durch die jeweilige Kante erreichbare Knoten
 						String tarVertex = null;
 						String tarVertex2 = null;
-						if(graph instanceof Pseudograph || graph instanceof SimpleWeightedGraph){
+/*IMPORTANT*/						if(graph instanceof Pseudograph || graph instanceof SimpleWeightedGraph){
 							tarVertex = graph.getEdgeTarget(tmpEdge);
 							tarVertex2 = graph.getEdgeSource(tmpEdge);
 							
