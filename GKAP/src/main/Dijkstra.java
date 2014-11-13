@@ -6,11 +6,17 @@ package main;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.WeightedGraph;
+import org.jgrapht.graph.*;
+
+import sun.font.CreatedFontTracker;
+
+import com.sun.istack.internal.Nullable;
 
 /**
  * @author KamikazeOnRoad
@@ -20,9 +26,11 @@ import org.jgrapht.graph.DefaultEdge;
 
 public class Dijkstra {
 	private static int accessesGraph = 0;
-
+	
+	@Nullable
 	public static String[] dijkstraSearch(Graph<String, DefaultEdge> graph, String startNode, String endNode) {
 		HashMap<String, String> predecessors = dijkstraAlgorithm(graph, startNode, endNode);
+		if (predecessors == null) { return null; }
 		ArrayList<String> result = new ArrayList<String>();
 		
 		String node = endNode;
@@ -30,6 +38,8 @@ public class Dijkstra {
 			result.add(0, node);
 			node = predecessors.get(node);
 		}
+		
+		System.out.println(predecessors);
 		
 		//System.out.println(result);
 		//System.out.println(result.toArray());
@@ -40,7 +50,7 @@ public class Dijkstra {
 		return resultArray;
 	}
 	
-	
+	@Nullable
 	private static HashMap<String, String> dijkstraAlgorithm(Graph<String, DefaultEdge> graph, String startNode, String endNode) {
 		Set<String> allNodes = graph.vertexSet();
 
@@ -61,30 +71,33 @@ public class Dijkstra {
 		distance.put(startNode, 0);
 		
 		// run
-		HashMap<String, Integer> queueDistance = new HashMap<>(distance);
-		
-		while (!queue.isEmpty()) {			
+		HashMap<String, Integer> queueDistance = new HashMap<>(distance);		
+		while (!queue.isEmpty() || !queueDistance.isEmpty()) {			
 			String actualNode = keyForLowestValue(queueDistance);
+
 			queueDistance.remove(actualNode);
 			queue.remove(actualNode);
 			
 			// find neighbours
+			System.out.println("Looking from " + actualNode);
 			Set<DefaultEdge> incidentEdges = graph.edgesOf(actualNode);
+//			System.out.println(incidentEdges);
 			accessesGraph++;
 			Set<DefaultEdge> relevantEdges = new HashSet<>();
+			
 			for (DefaultEdge edge : incidentEdges) {
-				String targetNode = graph.getEdgeTarget(edge);
-				accessesGraph++;
-				if (actualNode != targetNode) {
+				String neighbour = edgeTargetNode(graph, edge, actualNode);
+				System.out.println("Neighbour "+ neighbour);
+				if (neighbour != null) {
 					relevantEdges.add(edge);
 				}
 			}
+		
 			
 			for (DefaultEdge edge : relevantEdges) {
 				int weight = (int) graph.getEdgeWeight(edge);
 				accessesGraph++;
-				String targetNode = graph.getEdgeTarget(edge);
-				accessesGraph++;
+				String targetNode = edgeTargetNode(graph, edge, actualNode);
 				if (queue.contains(targetNode)) {
 					int way = distance.get(actualNode) + weight;
 					if (way < distance.get(targetNode)) {
@@ -98,13 +111,37 @@ public class Dijkstra {
 		return predecessor; 
 	}
 	
+	private static String edgeTargetNode(Graph<String, DefaultEdge> graph, DefaultEdge edge, String node) {
+		String targetNode = graph.getEdgeTarget(edge);
+		accessesGraph++;
+		String result = null;
+		
+		if (!node.equals(targetNode)) {
+			result = targetNode;
+		}
+		else {
+			if (graph instanceof SimpleWeightedGraph || graph instanceof Pseudograph) {
+				result = graph.getEdgeSource(edge);
+				accessesGraph++;
+			}
+		}
+		
+		return result;
+	}
+	
 	
 	private static String keyForLowestValue(HashMap<String, Integer> distance) {
-		String key = null;
-		Integer value = Integer.MAX_VALUE;
+		Iterator<Entry<String, Integer>> iterator = distance.entrySet().iterator();
+		if (!iterator.hasNext()) {
+			return null;
+		}
+		
+		Entry<String, Integer> first = iterator.next();
+		String key = first.getKey();
+		Integer value = first.getValue();
 		
 		for (Entry<String, Integer> entry : distance.entrySet()) {
-			if (entry.getValue() < value) { 
+			if (entry.getValue() < value) {
 				key = entry.getKey(); 
 				value = entry.getValue();
 			}			
