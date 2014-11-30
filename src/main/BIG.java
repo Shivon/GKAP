@@ -21,7 +21,7 @@ public class BIG {
 				DefaultWeightedEdge.class);
 
 		for (Integer i = 0; i < numVertex; i++) {
-			String vertex = "E" + i.toString();
+			String vertex = i.toString();
 			result.addVertex(vertex);
 			randomizer.add(vertex);
 		}

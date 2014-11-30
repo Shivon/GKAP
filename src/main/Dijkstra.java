@@ -38,10 +38,7 @@ public class Dijkstra {
 			result.add(0, node);
 			node = predecessors.get(node);
 		}
-		
-		//System.out.println(result);
-		//System.out.println(result.toArray());
-		//return (String[]) result.toArray();
+
 		String resultString = result.toString();
 		String [] resultArray = {resultString, (totalWay)+ "", (result.size() - 1)+ "", (accessesGraph)+ ""};
 		accessesGraph = 0;
