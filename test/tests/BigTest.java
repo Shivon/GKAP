@@ -25,8 +25,8 @@
 //
 //	@Test
 //	public void test1() {
-//		Dijkstra dijkstra = new Dijkstra(big);
-//		FloydWarshall fw = new FloydWarshall(big);
+//		String[] dijkstra = Dijkstra.dijkstraSearch(big, startNode, endNode);
+//		//FloydWarshall fw = new FloydWarshall(big);
 //
 //		Double d2 = dijkstra.findShortestPathSize("1","5");
 //		Double d = fw.entfernungVonNach("1","5");
