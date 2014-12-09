@@ -112,7 +112,16 @@ public class MainFrame extends JFrame {
 		fm.setPreferredSize(new Dimension(200, 50));
 		fm.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-					//TODO Floyd-Warshall
+				String str = field.getText();
+				String str2 = field2.getText();
+				FloydWarshall fw = new FloydWarshall(graph);
+				String[] result =  fw.floydWarshallSearch(str, str2);
+				if(result != null){
+					textArea.append("\n ================================================= \n");
+					textArea.append("Weg: " + result[0] + "\nLaenge Weg: " + result[1] + "\nbenoetigte Kanten: " + result[2] + "\nZugriffe Graph: " + result[3]);
+				}else{
+					textArea.setText("Kein möglichen Weg gefunden! \nOder unültige Eingabe!");
+				}
 			}
 		});
 		
